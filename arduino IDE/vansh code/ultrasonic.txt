@@ -1,0 +1,25 @@
+```c++
+
+CODE FOR ULTRASONIC SENSOR 
+
+ This is a complete and refined code for the HC-SR04 ultrasonic sensor with an Arduino Uno.
+ It measures the distance to an object in centimeters and includes a timeout for better performance.
+
+ Define the pins for the trigger (sends the pulse) and echo (receives the pulse).
+#define trigPin 9
+#define echoPin 10
+
+ Define variables to store the pulse duration (in microseconds) and the calculated distance (in cm).
+long duration;
+int distance;
+
+void setup() {
+   Start serial communication at a 9600 baud rate to display results on the Serial Monitor.
+  Serial.begin(9600);
+
+   Set the trigger pin as an OUTPUT because we will send a signal from it.
+  pinMode(trigPin, OUTPUT);
+   Set the echo pin as an INPUT because we will listen for a signal on it.
+  pinMode(echoPin, INPUT);
+}
+```

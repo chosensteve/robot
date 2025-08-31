@@ -1,0 +1,54 @@
+// TCS3200 COLOR SENSOR CODE
+// This code is specifically for the TCS3200 color sensor.
+// It directly reads the frequency output from the sensor.
+
+// Define the pins connected to the sensor
+#define S0_PIN 8
+#define S1_PIN 9
+#define S2_PIN 10
+#define S3_PIN 11
+#define OUT_PIN 2
+
+// A variable to store the frequency reading for each color
+int redFrequency = 0;
+int greenFrequency = 0;
+int blueFrequency = 0;
+
+void setup() {
+  // Start the serial communication for debugging
+  Serial.begin(9600);
+
+  // Set the pins as output or input
+  pinMode(S0_PIN, OUTPUT);
+  pinMode(S1_PIN, OUTPUT);
+  pinMode(S2_PIN, OUTPUT);
+  pinMode(S3_PIN, OUTPUT);
+  pinMode(OUT_PIN, INPUT);
+
+  // Set the output frequency scaling to 20%
+  // S0 and S1 control the scaling. 20% is a good balance for most applications.
+  // 0% - Low, 2% - Mid, 20% - High
+  digitalWrite(S0_PIN, HIGH);
+  digitalWrite(S1_PIN, LOW);
+
+  Serial.println("TCS3200 sensor initialized. Place an object in front of the sensor.");
+}
+
+void loop() {
+  // Read the frequency for each color component
+  redFrequency = readRedFrequency();
+  greenFrequency = readGreenFrequency();
+  blueFrequency = readBlueFrequency();
+
+  // Print the raw frequency values to the Serial Monitor
+  // Lower frequency values correspond to a higher intensity of that color.
+  Serial.print("B: ");
+  Serial.print(255-redFrequency);
+  Serial.print("\tR: ");
+  Serial.print(255-greenFrequency);
+  Serial.print("\tG: ");
+  Serial.println(255-blueFrequency);
+
+  // Wait for a second before the next reading
+  delay(1000);
+}

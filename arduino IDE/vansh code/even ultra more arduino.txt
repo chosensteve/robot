@@ -1,0 +1,26 @@
+// Function to read the frequency for the red color filter
+int readRedFrequency() {
+  // Set S2 and S3 to select the red filter
+  digitalWrite(S2_PIN, LOW);
+  digitalWrite(S3_PIN, LOW);
+  // Measure the frequency on the OUT pin and return it
+  return pulseIn(OUT_PIN, LOW);
+}
+
+// Function to read the frequency for the green color filter
+int readGreenFrequency() {
+  // Set S2 and S3 to select the green filter
+  digitalWrite(S2_PIN, HIGH);
+  digitalWrite(S3_PIN, HIGH);
+  // Measure the frequency on the OUT pin and return it
+  return pulseIn(OUT_PIN, LOW);
+}
+
+// Function to read the frequency for the blue color filter
+int readBlueFrequency() {
+  // Set S2 and S3 to select the blue filter
+  digitalWrite(S2_PIN, LOW);
+  digitalWrite(S3_PIN, HIGH);
+  // Measure the frequency on the OUT pin and return it
+  return pulseIn(OUT_PIN, LOW);
+}

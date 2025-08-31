@@ -1,0 +1,73 @@
+#include <Servo.h>
+
+// Create four servo objects
+Servo servo1;
+Servo servo2;
+Servo servo3;
+Servo servo4;
+
+void setup() {
+  // Attach each servo to a specific PWM digital pin
+  // On an Arduino Uno, PWM pins are 3, 5, 6, 9, 10, 11
+  servo1.attach(9);
+  servo2.attach(10);
+  servo3.attach(11);
+  servo4.attach(6); // Moved from pin 12 to PWM pin 6
+
+  // Start the serial communication at 9600 baud rate
+  Serial.begin(9600);
+  Serial.println("Enter commands in the format: servo<number> <angle>");
+  Serial.println("Example: servo1 90");
+}
+
+void loop() {
+  // Check if there is data available to read from the serial port
+  if (Serial.available() > 0) {
+    // Read the incoming command as a String
+    String command = Serial.readStringUntil('\n');
+
+    // Remove any leading/trailing whitespace
+    command.trim();
+
+    // Find the space between the servo number and the angle
+    int spaceIndex = command.indexOf(' ');
+
+    // If a space is found, parse the command
+    if (spaceIndex != -1) {
+      // Extract the servo number part of the command
+      String servoPart = command.substring(0, spaceIndex);
+      // Extract the angle part of the command
+      String anglePart = command.substring(spaceIndex + 1);
+
+      // Convert the angle part to an integer
+      int angle = anglePart.toInt();
+
+      // Determine which servo to control based on the command
+      if (servoPart.equalsIgnoreCase("servo1")) {
+        servo1.write(angle);
+        Serial.print("Servo 1 (Pin 9) moved to ");
+        Serial.print(angle);
+        Serial.println(" degrees.");
+      } else if (servoPart.equalsIgnoreCase("servo2")) {
+        servo2.write(angle);
+        Serial.print("Servo 2 (Pin 10) moved to ");
+        Serial.print(angle);
+        Serial.println(" degrees.");
+      } else if (servoPart.equalsIgnoreCase("servo3")) {
+        servo3.write(angle);
+        Serial.print("Servo 3 (Pin 11) moved to ");
+        Serial.print(angle);
+        Serial.println(" degrees.");
+      } else if (servoPart.equalsIgnoreCase("servo4")) {
+        servo4.write(angle);
+        Serial.print("Servo 4 (Pin 6) moved to ");
+        Serial.print(angle);
+        Serial.println(" degrees.");
+      } else {
+        Serial.println("Invalid servo number. Use servo1, servo2, servo3, or servo4.");
+      }
+    } else {
+      Serial.println("Invalid command format. Use: servo<number> <angle>");
+    }
+  }
+}

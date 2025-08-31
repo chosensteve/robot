@@ -1,0 +1,42 @@
+void loop() {
+  // --- Step 1: Prepare the Trigger Pin ---
+  // Ensure the trigger pin is set to LOW before sending the pulse.
+  // This is a standard practice to ensure a clean high pulse.
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  // --- Step 2: Send the Ultrasonic Pulse ---
+  // Send a 10-microsecond high pulse on the trigger pin to start the measurement.
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  // --- Step 3: Read the Echo Pulse ---
+  // Read the echo pin for the duration of the returning pulse.
+  // pulseIn() measures how long the pin is HIGH, in microseconds.
+  // A timeout (e.g., 25000 microseconds) is added. If no echo is received within this time,
+  // the function will stop waiting and return 0. This prevents the code from getting stuck.
+  duration = pulseIn(echoPin, HIGH, 25000);
+
+  // --- Step 4: Process the Reading and Calculate Distance --- 
+  // Check if a valid pulse was received.
+  if (duration == 0) {
+    // If the duration is 0, it means pulseIn() timed out.
+    // This could mean the object is out of range, there's a wiring issue, or the sensor is faulty.
+    Serial.println("Failed to receive echo. Check wiring or object is out of range.");
+  } else {
+    // Calculate the distance.
+    // The speed of sound is approximately 0.0343 centimeters per microsecond.
+    // We divide the total travel time (duration) by 2 because the sound wave
+    // travels to the object and back.
+    distance = duration * 0.0343 / 2;
+
+    // Print the calculated distance to the Serial Monitor.
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.println(" cm");
+  }
+  
+  // Wait for a brief moment before taking the next reading to avoid flooding the Serial Monitor.
+  delay(500);
+}
