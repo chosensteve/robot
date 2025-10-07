@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Robodex Member Card - Glitch Grid Theme</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --glitch-cyan: #00FFFF;
+      --glitch-magenta: #FF00FF;
+      --text-color: #EAEAEA;
+      --card-bg: rgba(26, 29, 36, 0.85);
+      --body-bg: #101216;
+      --border-color: rgba(0, 255, 255, 0.4);
+      --grid-color: rgba(0, 255, 255, 0.1);
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: var(--body-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: scrollGrid 25s linear infinite;
+      z-index: 0;
+      mask-image: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    }
+
+    @keyframes scrollGrid {
+      from { background-position: 0 0; }
+      to { background-position: 0 -1000px; }
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.15"/></svg>');
+      z-index: 0;
+      animation: flicker 3s linear infinite;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 0.15; }
+      50% { opacity: 0.1; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.1), inset 0 0 4px rgba(0, 255, 255, 0.2);
+      width: 380px;
+      max-width: 90vw;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+      overflow: hidden; /* To contain pseudo-elements */
+    }
+    
+    /* Scanline effect */
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(16, 18, 22, 0) 0%, rgba(16, 18, 22, 0.5) 50%, rgba(16, 18, 22, 0) 100%);
+      background-size: 100% 4px;
+      animation: scanline 8s linear infinite;
+      z-index: 2;
+      pointer-events: none;
+    }
+    
+    @keyframes scanline {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 100px; }
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      margin-bottom: 1.5rem;
+      filter: saturate(0.8) contrast(1.1);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    }
+    
+    .glitch-text {
+      position: relative;
+      color: var(--text-color);
+      text-shadow: 0 0 2px rgba(234, 234, 234, 0.5);
+      z-index: 3;
+    }
+
+    .glitch-text::before,
+    .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--card-bg);
+      overflow: hidden;
+    }
+
+    .glitch-text::before {
+      left: 2px;
+      text-shadow: -1px 0 var(--glitch-magenta);
+      clip: rect(24px, 550px, 90px, 0);
+      animation: glitch-anim-1 2s infinite linear alternate-reverse;
+    }
+
+    .glitch-text::after {
+      left: -2px;
+      text-shadow: -1px 0 var(--glitch-cyan), 1px 0 var(--glitch-magenta);
+      clip: rect(85px, 550px, 140px, 0);
+      animation: glitch-anim-2 3s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch-anim-1 {
+      0% { clip: rect(42px, 9999px, 44px, 0); }
+      100% { clip: rect(21px, 9999px, 51px, 0); }
+    }
+    @keyframes glitch-anim-2 {
+      0% { clip: rect(6px, 9999px, 78px, 0); }
+      100% { clip: rect(90px, 9999px, 63px, 0); }
+    }
+
+    .member-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .role {
+      font-size: 1.15rem;
+      color: var(--glitch-cyan);
+      margin-bottom: 0.5rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    
+    .school {
+      font-size: 1rem;
+      color: #A0AEC0;
+      margin-bottom: 1rem;
+    }
+    
+    .bio {
+      font-size: 0.9rem;
+      color: #A0AEC0;
+      margin-bottom: 2rem;
+      max-width: 300px;
+    }
+
+    .links {
+      display: flex;
+      gap: 25px;
+      justify-content: center;
+      z-index: 3;
+    }
+
+    .links a {
+      text-decoration: none;
+      color: var(--glitch-cyan);
+      font-size: 1.5rem;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    .links a:hover {
+      color: #FFFFFF;
+      text-shadow: 0 0 8px var(--glitch-cyan);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="Screenshot (1).png" alt="Member Avatar" class="avatar" />
+    
+    <div class="glitch-text member-name" data-text="Arnav Goyal">Arnav Goyal</div>
+    
+    <div class="role">TECH HEAD</HEAD></div>
+    <div class="school">[ Robodex ]</div>
+    
+    <div class="bio">
+     As the Tech Head, I drive our group’s innovation and solve key technical challenges. My passion for robotics is shown in hands-on projects, from developing line-following robots to building administrative systems like 'Robodex'. I thrive on mentoring teammates through complex hardware and software problems, leading by example to ensure our collective success and push our boundaries.
+    </div>
+    
+    <div class="links">
+      <a href="mailto:arnav@example.com" title="Email">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-spotify" viewBox="0 0 16 16">
+  <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.669 11.538a.5.5 0 0 1-.686.165c-1.879-1.147-4.243-1.407-7.028-.77a.499.499 0 0 1-.222-.973c3.048-.696 5.662-.397 7.77.892a.5.5 0 0 1 .166.686m.979-2.178a.624.624 0 0 1-.858.205c-2.15-1.321-5.428-1.704-7.972-.932a.625.625 0 0 1-.362-1.194c2.905-.881 6.517-.454 8.986 1.063a.624.624 0 0 1 .206.858m.084-2.268C10.154 5.56 5.9 5.419 3.438 6.166a.748.748 0 1 1-.434-1.432c2.825-.857 7.523-.692 10.492 1.07a.747.747 0 1 1-.764 1.288"/>
+</svg>
+      </a>
+      <a href="https://github.com/arnavgoyal543" target="_blank" title="GitHub">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      </a>
+
+      </a>
+      <a href="https://github.com/arnavgoyal543" target="_blank" title="GitHub">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
+  <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/>
+</svg>
+      </a>
+    </div>
+  </div>
+</body>
+
+</html>
