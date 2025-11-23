@@ -1,205 +1,105 @@
-#include <Wire.h>
-#include <Adafruit_PWMServoDriver.h>
+int s0 = 14;
+int s1 = 27;
+int s2 = 26;
+int s3 = 25;
+int sigPin = 34;
 
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+int AIN1 = 16;
+int AIN2 = 17;
+int PWMA = 18;
+int BIN1 = 19;
+int BIN2 = 21;
+int PWMB = 22;
+int STBY = 5;
 
-// Servo setup
-int servoMin = 150;
-int servoMax = 600;
+float Kp = 30;
+float Ki = 0;
+float Kd = 0.2;
+int base = 700;
+float sum_err = 0;
+float last_err = 0;
+int turn_t = 300;
 
-// Motor driver pins
-int IN1 = 9;
-int IN2 = 10;
-int IN3 = 11;
-int IN4 = 12;
+int read_mux(int ch) {
+  digitalWrite(s0, ch & 1);
+  digitalWrite(s1, (ch >> 1) & 1);
+  digitalWrite(s2, (ch >> 2) & 1);
+  digitalWrite(s3, (ch >> 3) & 1);
+  delayMicroseconds(50);
+  return analogRead(sigPin);
+}
+
+float read_line(int lvl[]) {
+  int v[6];
+  for (int i = 0; i < 6; i++) v[i] = read_mux(i);
+  for (int i = 0; i < 6; i++) lvl[i] = (v[i] < 2000) ? 1 : 0;
+
+  float t = 0, c = 0;
+  for (int i = 0; i < 6; i++) {
+    t += i * lvl[i];
+    c += lvl[i];
+  }
+  if (c == 0) return 2.5;
+  return t / c;
+}
+
+void motor(int l, int r) {
+  l = constrain(l, -255, 255);
+  r = constrain(r, -255, 255);
+
+  if (l >= 0) {
+    digitalWrite(AIN1, 0); digitalWrite(AIN2, 1); analogWrite(PWMA, l);
+  } else {
+    digitalWrite(AIN1, 1); digitalWrite(AIN2, 0); analogWrite(PWMA, -l);
+  }
+
+  if (r >= 0) {
+    digitalWrite(BIN1, 0); digitalWrite(BIN2, 1); analogWrite(PWMB, r);
+  } else {
+    digitalWrite(BIN1, 1); digitalWrite(BIN2, 0); analogWrite(PWMB, -r);
+  }
+}
 
 void setup() {
-  Serial.begin(9600);
+  pinMode(s0, OUTPUT);
+  pinMode(s1, OUTPUT);
+  pinMode(s2, OUTPUT);
+  pinMode(s3, OUTPUT);
 
-  // Servo setup
-  pwm.begin();
-  pwm.setPWMFreq(50);
-  delay(10);
+  pinMode(AIN1, OUTPUT);
+  pinMode(AIN2, OUTPUT);
+  pinMode(PWMA, OUTPUT);
+  pinMode(BIN1, OUTPUT);
+  pinMode(BIN2, OUTPUT);
+  pinMode(PWMB, OUTPUT);
+  pinMode(STBY, OUTPUT);
 
-  // Motor setup
-  pinMode(IN1, OUTPUT);
-  pinMode(IN2, OUTPUT);
-  pinMode(IN3, OUTPUT);
-  pinMode(IN4, OUTPUT);
-
-  // Start with motors OFF
-  stopMotors();
-
-  Serial.println("System ready.");
-  Serial.println("Enter multiple commands separated by ';'");
-  Serial.println("Examples: '0 90; 1 120', 'w 1000; default; s 500'");
+  digitalWrite(STBY, 1);
 }
 
 void loop() {
-  if (Serial.available() > 0) {
-    String line = Serial.readStringUntil('\n');
-    line.trim();
+  int lvl[6];
+  float pos = read_line(lvl);
+  float err = 2.5 - pos;
+  sum_err += err;
 
-    // Split by semicolon
-    int start = 0;
-    while (start < line.length()) {
-      int sep = line.indexOf(';', start);
-      String cmd;
-      if (sep == -1) {
-        cmd = line.substring(start);
-        start = line.length();
-      } else {
-        cmd = line.substring(start, sep);
-        start = sep + 1;
-      }
-
-      cmd.trim();
-      if (cmd.length() > 0) {
-        processCommand(cmd);
-      }
-    }
-  }
-}
-
-// ------------------- Command processor -------------------
-void processCommand(String input) {
-  // Keyword commands
-  if (input.equalsIgnoreCase("default")) {
-    clawDefault();
-    Serial.println("Claw reset to default position."); 
+  if (lvl[0] == 1 && (lvl[1] + lvl[2] + lvl[3] + lvl[4] + lvl[5] == 0)) {
+    motor(255, -255);
+    delay(turn_t);
     return;
   }
 
-  if (input.equalsIgnoreCase("open")) {
-    clawOpen();
-    return;
-    }
-
-  if (input.equalsIgnoreCase("close")) {
-    clawClose();
-    return;
-    }
-
-  if (input.equalsIgnoreCase("pick")) {
-    clawPick();
-    return;
-    }    
-
-  // Find space for argument separation
-  int spaceIndex = input.indexOf(' ');
-  if (spaceIndex == -1) {
-    Serial.println("Invalid format. Use: '0 angle', 'w 1000', or keywords.");
+  if (lvl[5] == 1 && (lvl[0] + lvl[1] + lvl[2] + lvl[3] + lvl[4] == 0)) {
+    motor(-255, 255);
+    delay(turn_t);
     return;
   }
 
-  String first = input.substring(0, spaceIndex);
-  String second = input.substring(spaceIndex + 1);
+  float corr = (Kp * err) + (Ki * sum_err) + (Kd * (err - last_err));
+  int left = base + (corr * 2);
+  int right = base - (corr * 2);
 
-  // Servo command
-  if (isDigit(first.charAt(0))) {
-    int channel = first.toInt();
-    int angle = second.toInt();
-
-    if (channel >= 0 && channel <= 3 && angle >= 0 && angle <= 180) {
-      clawMove(channel, angle);
-      Serial.print("Servo "); Serial.print(channel);
-      Serial.print(" -> "); Serial.println(angle);
-    } else {
-      Serial.println("Servo input invalid. Use channel 0–3, angle 0–180.");
-    }
-  } 
-  else {
-    // Movement command
-    char dir = first.charAt(0);
-    int duration = second.toInt();
-
-    if (duration <= 0) {
-      Serial.println("Duration must be > 0 ms.");
-      return;
-    }
-
-    if (dir == 'w' || dir == 'W') forward();
-    else if (dir == 's' || dir == 'S') backward();
-    else if (dir == 'a' || dir == 'A') left();
-    else if (dir == 'd' || dir == 'D') right();
-    else if (dir == 'x' || dir == 'X') stopMotors();
-    else {
-      Serial.println("Use W/A/S/D/X for movement.");
-      return;
-    }
-
-    delay(duration);   // ✅ uses specified movement time
-    stopMotors();
-    Serial.print("Moved "); Serial.print(dir);
-    Serial.print(" for "); Serial.print(duration);
-    Serial.println(" ms");
-  }
+  motor(left, right);
+  last_err = err;
+  delayMicroseconds(5000);
 }
-
-// ------------------- Motor functions -------------------
-void backward() {
-  digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, LOW);
-  digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);
-}
-
-void forward() {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, HIGH);
-}
-
-void right() {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
-  digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);
-}
-
-void left() {
-  digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, LOW);
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, HIGH);
-}
-
-void stopMotors() {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, LOW);
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, LOW);
-}
-
-// ------------------- Claw functions -------------------
-void clawMove(int channel, int angle) {
-  int pulselen = map(angle, 0, 180, servoMin, servoMax);
-  pwm.setPWM(channel, 0, pulselen);
-  delay(500);  
-}
-
-void clawDefault() {
-  clawMove(2, 165);
-  clawMove(1, 90);
-  clawMove(0, 90);
-  clawClose();
-}
-
-void clawOpen() {
-  clawMove(3, 50);
-  }
-
-void clawClose(){
-  clawMove(3, 130);
-  }
-
-void clawPick(){
-  //default; open; 1 165; 2 130; close; default
-  clawDefault; 
-  clawOpen();
-  clawMove(1, 165);
-  clawMove(2, 140);
-  clawClose();
-  clawDefault();
-  }
