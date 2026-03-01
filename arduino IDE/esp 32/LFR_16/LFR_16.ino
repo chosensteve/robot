@@ -51,7 +51,17 @@ void loop() {
 
     // Clean aligned formatting
   // Keep alignment
-    Serial.print(value);
+    if (value > 3000) {
+      Serial.print("black");
+    }
+
+    else if (value < 2900 & value > 1500){
+      Serial.print("white");
+    }
+
+    else {
+      Serial.print("error");
+    }
     Serial.print("  ");
   }
 
