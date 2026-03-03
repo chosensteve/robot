@@ -3,9 +3,9 @@
 #include <SPI.h>
 
 // ===== TFT Pins =====
-#define TFT_CS   5
-#define TFT_DC   2
-#define TFT_RST  4
+#define TFT_CS   1
+#define TFT_DC   3
+#define TFT_RST  2
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
@@ -16,10 +16,13 @@ const uint16_t myImage[20480] PROGMEM  = {
 
 void setup() {
 
-  SPI.begin(18, -1, 23, 5);  // SCK, MISO, MOSI, CS
+  SPI.begin(8, 9, 10, 1);  // SCK, MISO, MOSI, CS
 
   tft.initR(INITR_BLACKTAB);
   tft.setRotation(0);   // 0 = vertical
+
+  tft.fillScreen(ST77XX_RED);
+  delay(1000);
   tft.fillScreen(ST77XX_BLACK);
 
   // Draw image
