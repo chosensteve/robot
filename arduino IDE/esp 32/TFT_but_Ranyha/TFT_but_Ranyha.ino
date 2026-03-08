@@ -5,7 +5,7 @@
 // ===== TFT Pins =====
 #define TFT_CS   1
 #define TFT_DC   3
-#define TFT_RST  2
+#define TFT_RST  s2
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
