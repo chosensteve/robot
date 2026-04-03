@@ -30,7 +30,7 @@ TAB_SPOTIFY = 0
 TAB_CLOCK = 1
 TOTAL_TABS = 2
 
-current_tab = TAB_SPOTIFY
+current_tab = TAB_CLOCK
 tab_switch_time = 0.0
 
 def next_tab():
