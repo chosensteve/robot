@@ -1,11 +1,14 @@
 import serial
 import time
 import spotipy
+import os
 from spotipy.oauth2 import SpotifyOAuth
 import keyboard
 import datetime
 
 # --- CONFIGURATION ---
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 COM_PORT = 'COM7'
 BAUD_RATE = 115200
 
