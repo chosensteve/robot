@@ -7,8 +7,13 @@
 #define OLED_RESET -1
 Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-// --- BITMAP LOGOS ---
-// 24x24 Spotify Icon for the Tab Menu
+// --- BURN-IN PREVENTION ---
+unsigned long last_shift_time = 0;
+int global_x_offset = 0;
+int global_y_offset = 0;
+
+// --- BITMAP ICONS ---
+// 24x24 Spotify Icon 
 const unsigned char PROGMEM menu_spotify_icon [] = {
   0x00, 0xff, 0x00, 0x03, 0xff, 0xc0, 0x07, 0xff, 0xf0, 0x1f, 0xff, 0xf8,
   0x1f, 0xff, 0xfc, 0x3f, 0xff, 0xfc, 0x7f, 0xff, 0xfe, 0x70, 0x00, 0x7e,
@@ -18,7 +23,7 @@ const unsigned char PROGMEM menu_spotify_icon [] = {
   0x1f, 0xff, 0xf8, 0x07, 0xff, 0xe0, 0x03, 0xff, 0xc0, 0x00, 0xff, 0x00
 };
 
-// 24x24 Analog Clock Icon for the Tab Menu
+// 24x24 Clock Icon 
 const unsigned char PROGMEM menu_clock_icon [] = {
   0x00, 0x7f, 0x80, 0x03, 0xff, 0xe0, 0x0f, 0x00, 0xf0, 0x1c, 0x00, 0x38, 
   0x38, 0x00, 0x1c, 0x70, 0x10, 0x0e, 0x60, 0x10, 0x06, 0xe0, 0x10, 0x07, 
@@ -38,7 +43,7 @@ const unsigned char PROGMEM pause_icon [] = {
   0x00, 0x1b, 0x1b, 0x1b, 0x1b, 0x1b, 0x1b, 0x00
 };
 
-// Helper function to print perfectly centered text
+// Helper function to print centered text
 void printCenteredText(String text, int y, int size) {
   int16_t x1, y1;
   uint16_t w, h;
@@ -47,7 +52,7 @@ void printCenteredText(String text, int y, int size) {
   
   // Calculate X position so width is perfectly centered on screen
   int x = (SCREEN_WIDTH - w) / 2;
-  display.setCursor(x, y);
+  display.setCursor(x + global_x_offset, y + global_y_offset);
   display.print(text);
 }
 
@@ -60,7 +65,6 @@ void setup() {
     for(;;);
   }
   
-  // High constrast startup screen
   display.clearDisplay();
   display.setTextColor(SH110X_WHITE);
   printCenteredText("Booting...", 28, 1);
@@ -83,15 +87,15 @@ void renderSpotifyTab(String data) {
     
     display.clearDisplay();
     
-    // 1. Draw Text perfectly spaced in upper half
+    // Text - upper half
     printCenteredText(song, 14, 1);
     printCenteredText(artist, 28, 1);
     
     // 2. Draw Progress Bar at the lower-middle
     int barWidth = 100;
     int barHeight = 4;
-    int barX = (SCREEN_WIDTH - barWidth) / 2;
-    int barY = 44; 
+    int barX = (SCREEN_WIDTH - barWidth) / 2 + global_x_offset;
+    int barY = 44 + global_y_offset; 
     
     display.drawRect(barX, barY, barWidth, barHeight, SH110X_WHITE); // Outline
     
@@ -102,8 +106,8 @@ void renderSpotifyTab(String data) {
     }
     
     // 3. Draw Play/Pause Icon under the progress bar center
-    int iconX = 60;
-    int iconY = 52;
+    int iconX = 60 + global_x_offset;
+    int iconY = 52 + global_y_offset;
     
     if (status == "PLAYING") {
       display.drawBitmap(iconX, iconY, play_icon, 8, 8, SH110X_WHITE);
@@ -125,10 +129,10 @@ void renderClockTab(String data) {
     
     display.clearDisplay();
     
-    // Time format in large font, right in the center!
+    // print time 
     printCenteredText(timeStr, 20, 2);
     
-    // Date format in smaller font directly below it
+    // print date below time
     printCenteredText(dateStr, 45, 1);
 
     display.display();
@@ -141,26 +145,33 @@ void renderMenuTab(String tabName) {
   
   // Draw giant < and > arrows on the edges
   display.setTextSize(2);
-  display.setCursor(4, 24);
+  display.setCursor(4 + global_x_offset, 24 + global_y_offset);
   display.print("<");
   
-  display.setCursor(110, 24);
+  display.setCursor(110 + global_x_offset, 24 + global_y_offset);
   display.print(">");
   
   // Draw the app icon in the center!
   if (tabName == "Spotify") {
-    display.drawBitmap(52, 12, menu_spotify_icon, 24, 24, SH110X_WHITE);
+    display.drawBitmap(52 + global_x_offset, 12 + global_y_offset, menu_spotify_icon, 24, 24, SH110X_WHITE);
   } else {
-    display.drawBitmap(52, 12, menu_clock_icon, 24, 24, SH110X_WHITE);
+    display.drawBitmap(52 + global_x_offset, 12 + global_y_offset, menu_clock_icon, 24, 24, SH110X_WHITE);
   }
   
-  // Draw the app title underneath the icon
+  // text under icon
   printCenteredText(tabName, 44, 1);
   
   display.display();
 }
 
 void loop() {
+  // Update burn-in pixel shift every 1 minute
+  if (millis() - last_shift_time > 60000) {
+    last_shift_time = millis();
+    global_x_offset = random(-3, 4); // Random between -3 and 3
+    global_y_offset = random(-3, 4); // Random between -3 and 3
+  }
+
   if (Serial.available()) {
     String command = Serial.readStringUntil('\n');
     command.trim();
@@ -179,7 +190,6 @@ void loop() {
         renderClockTab(payload);
       }
       else {
-        // Fallback for errors
         display.clearDisplay();
         printCenteredText(command, 30, 1);
         display.display();

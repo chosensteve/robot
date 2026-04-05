@@ -7,10 +7,20 @@ import keyboard
 import datetime
 
 # --- CONFIGURATION ---
+import sys
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+sys.stdout = open('log.txt', 'a', encoding='utf-8')
+sys.stderr = sys.stdout
+
 
 COM_PORT = 'COM7'
 BAUD_RATE = 115200
+
+# --- BURN-IN PREVENTION ---
+# Animates menus every 6 minutes unconditionally. 
+# Defaults to clock if no music is playing.
+ANIMATION_INTERVAL = 360 
+last_animation_time = time.time()
 
 # Spotify API Keys
 CLIENT_ID = "c5c88bce0d9d4bd98bc192ffa8c8386d"
@@ -34,16 +44,18 @@ current_tab = TAB_CLOCK
 tab_switch_time = 0.0
 
 def next_tab():
-    global current_tab, tab_switch_time
+    global current_tab, tab_switch_time, last_animation_time
     current_tab = (current_tab + 1) % TOTAL_TABS
     tab_switch_time = time.time()
+    last_animation_time = time.time()
     tab_name = "CLOCK" if current_tab == 1 else "SPOTIFY"
     print(f"\n>>> SWITCHED TO TAB: {tab_name} <<<")
 
 def prev_tab():
-    global current_tab, tab_switch_time
+    global current_tab, tab_switch_time, last_animation_time
     current_tab = (current_tab - 1) % TOTAL_TABS
     tab_switch_time = time.time()
+    last_animation_time = time.time()
     tab_name = "CLOCK" if current_tab == 1 else "SPOTIFY"
     print(f"\n>>> SWITCHED TO TAB: {tab_name} <<<")
 
@@ -71,6 +83,7 @@ def get_media_info():
 
 
 def main():
+    global current_tab, last_animation_time
     print("====================================")
     print(" PC Dashboard Server v3.0 (TABS) ")
     print("====================================")
@@ -92,7 +105,28 @@ def main():
             
             # Streaming Loop
             while True:
-                # If we recently switched tabs, show the App Switcher Menu
+                # Unconditional Periodic Animation (Every 6 minutes)
+                if time.time() - last_animation_time > ANIMATION_INTERVAL:
+                    print("\n[PERIODIC ANIMATION] Triggering 5 tab switches...")
+                    for i in range(5):
+                        temp_tab_name = "Spotify" if (i % 2 == 0) else "Clock"
+                        ser.write(f"M|{temp_tab_name}\n".encode('utf-8'))
+                        time.sleep(0.6)
+                        
+                    # Check music activity directly from API
+                    check_media = get_media_info()
+                    if check_media and "PLAYING" in check_media:
+                        print("[PERIODIC ANIMATION] Music is active, resuming previous tab.")
+                    else:
+                        print("[PERIODIC ANIMATION] No music playing, defaulting to Clock.")
+                        current_tab = TAB_CLOCK
+                        
+                    last_animation_time = time.time()
+
+                # Fetch Spotify media info (we need this if we are rendering the Spotify tab)
+                media_data = get_media_info() if current_tab == TAB_SPOTIFY else None
+
+                # If we recently switched tabs manually, show the App Switcher Menu
                 if time.time() - tab_switch_time < 2.0:
                     tab_name = "Clock" if current_tab == TAB_CLOCK else "Spotify"
                     payload = f"M|{tab_name}\n"
