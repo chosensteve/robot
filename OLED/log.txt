@@ -434,4 +434,115 @@ Connected! Streaming Data...
 [PERIODIC ANIMATION] Triggering 5 tab switches...
 [PERIODIC ANIMATION] No music playing, defaulting to Clock.
 
-[PERIODIC ANIMATION] Triggering 5 tab switches...
+[PERIODIC ANIMATION] Triggering 5 tab switches...====================================
+ PC Dashboard Server v3.0 (TABS) 
+====================================
+HOTKEYS ENABLED: Shift + Page Up/Down
+
+Verifying Spotify connection...
+Traceback (most recent call last):
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\urllib3\connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\urllib3\connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='accounts.spotify.com', port=443): Failed to resolve 'accounts.spotify.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\requests\adapters.py", line 645, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\urllib3\util\retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='accounts.spotify.com', port=443): Max retries exceeded with url: /api/token (Caused by NameResolutionError("HTTPSConnection(host='accounts.spotify.com', port=443): Failed to resolve 'accounts.spotify.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "c:\Users\Dev\Desktop\cs\OLED\dashboard_controller.py", line 163, in <module>
+    main()
+    ~~~~^^
+  File "c:\Users\Dev\Desktop\cs\OLED\dashboard_controller.py", line 94, in main
+    sp.current_user_playing_track()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\spotipy\client.py", line 1380, in current_user_playing_track
+    return self._get(
+           ~~~~~~~~~^
+        "me/player/currently-playing",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        market=market,
+        ^^^^^^^^^^^^^^
+        additional_types=",".join(additional_types)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\spotipy\client.py", line 321, in _get
+    return self._internal_call("GET", url, payload, kwargs)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\spotipy\client.py", line 247, in _internal_call
+    headers = self._auth_headers()
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\spotipy\client.py", line 238, in _auth_headers
+    token = self.auth_manager.get_access_token(as_dict=False)
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\spotipy\oauth2.py", line 503, in get_access_token
+    token_info = self.validate_token(self.cache_handler.get_cached_token())
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\spotipy\oauth2.py", line 349, in validate_token
+    token_info = self.refresh_access_token(
+        token_info["refresh_token"]
+    )
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\spotipy\oauth2.py", line 555, in refresh_access_token
+    response = self._session.post(
+        self.OAUTH_TOKEN_URL,
+    ...<3 lines>...
+        timeout=self.requests_timeout,
+    )
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\requests\sessions.py", line 640, in post
+    return self.request("POST", url, data=data, json=json, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\requests\sessions.py", line 592, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\requests\sessions.py", line 706, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\requests\adapters.py", line 678, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='accounts.spotify.com', port=443): Max retries exceeded with url: /api/token (Caused by NameResolutionError("HTTPSConnection(host='accounts.spotify.com', port=443): Failed to resolve 'accounts.spotify.com' ([Errno 11001] getaddrinfo failed)"))
