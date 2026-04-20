@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQI Sensor — Design Document</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover-page">
+  <div class="cover-accent"></div>
+  <div class="cover-content">
+    <div class="cover-logo">
+      <img src="dps dwarka.png" alt="DPS Dwarka">
+    </div>
+    <div class="cover-badge">Hardware Design Document</div>
+    <h1 class="cover-title">Air Quality Index<br><span>Monitoring System</span></h1>
+    <div class="cover-divider"></div>
+    <p class="cover-subtitle">ESP32-Based Multi-Sensor AQI Platform</p>
+    <div class="cover-meta">
+      <div class="meta-item"><span class="meta-label">Version</span><span class="meta-value">1.0</span></div>
+      <div class="meta-item"><span class="meta-label">Date</span><span class="meta-value">April 2026</span></div>
+      <div class="meta-item"><span class="meta-label">Status</span><span class="meta-value">Draft</span></div>
+    </div>
+  </div>
+  <div class="cover-footer">
+    <span>AI/Robotics Lab</span>
+  </div>
+</div>
+
+<!-- PAGE 2: OVERVIEW -->
+<div class="page">
+  <div class="page-header">
+    <span class="doc-title">AQI Monitoring System</span>
+    <span class="page-number">2</span>
+  </div>
+
+  <h2 class="section-title"><span class="section-num">01</span> Project Overview</h2>
+
+  <div class="overview-grid">
+    <div class="overview-card">
+      <div class="card-icon">🎯</div>
+      <h3>Objective</h3>
+      <p>Design a compact, real-time Air Quality Index monitoring system capable of detecting harmful gases and particulate matter concentrations in indoor and outdoor environments.</p>
+    </div>
+    <div class="overview-card">
+      <div class="card-icon">📡</div>
+      <h3>Connectivity</h3>
+      <p>Built-in Wi-Fi and Bluetooth via ESP32 enables wireless data transmission to cloud dashboards or local display units for remote monitoring.</p>
+    </div>
+    <div class="overview-card">
+      <div class="card-icon">⚡</div>
+      <h3>Power</h3>
+      <p>Low-power design operating at 3.3V–5V, suitable for battery-powered deployments with sleep mode capabilities for extended field operation.</p>
+    </div>
+    <div class="overview-card">
+      <div class="card-icon">🔬</div>
+      <h3>Sensing</h3>
+      <p>Dual-sensor architecture combining gas detection (NH₃, CO₂, Benzene, NOₓ) and particulate matter (PM2.5) measurement for comprehensive air quality analysis.</p>
+    </div>
+  </div>
+
+  <h2 class="section-title"><span class="section-num">02</span> Bill of Materials</h2>
+
+  <table class="bom-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Component</th>
+        <th>Specification</th>
+        <th>Qty</th>
+        <th>Interface</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="row-num">1</td>
+        <td><strong>ESP32 DevKit V1</strong></td>
+        <td>Dual-core 240MHz, 520KB SRAM, Wi-Fi + BLE</td>
+        <td>1</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td class="row-num">2</td>
+        <td><strong>MQ-135 Gas Sensor</strong></td>
+        <td>NH₃, NOₓ, CO₂, Benzene, Alcohol detection</td>
+        <td>1</td>
+        <td>Analog</td>
+      </tr>
+      <tr>
+        <td class="row-num">3</td>
+        <td><strong>GP2Y1010AU0F</strong></td>
+        <td>PM2.5 Optical Dust / Smoke Particle Sensor</td>
+        <td>1</td>
+        <td>Analog + Digital</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="page-footer">
+    <span>AI/Robotics Lab — Design Document v1.0</span>
+    <span>April 2026</span>
+  </div>
+</div>
+
+<!-- PAGE 3: COMPONENT DETAILS -->
+<div class="page">
+  <div class="page-header">
+    <span class="doc-title">AQI Monitoring System</span>
+    <span class="page-number">3</span>
+  </div>
+
+  <h2 class="section-title"><span class="section-num">03</span> Component Details</h2>
+
+  <!-- ESP32 -->
+  <div class="component-block">
+    <div class="component-header">
+      <div class="component-tag">MCU</div>
+      <h3>ESP32 DevKit V1</h3>
+    </div>
+    <div class="component-body component-with-image">
+      <div class="component-image">
+        <img src="esp32.png" alt="ESP32 DevKit V1">
+      </div>
+      <div class="component-specs">
+        <div class="spec-grid">
+          <div class="spec-item"><span class="spec-key">Processor</span><span class="spec-val">Xtensa Dual-Core 32-bit LX6, 240 MHz</span></div>
+          <div class="spec-item"><span class="spec-key">Memory</span><span class="spec-val">520 KB SRAM, 4 MB Flash</span></div>
+          <div class="spec-item"><span class="spec-key">Wireless</span><span class="spec-val">Wi-Fi 802.11 b/g/n + Bluetooth 4.2 BLE</span></div>
+          <div class="spec-item"><span class="spec-key">GPIO</span><span class="spec-val">34 programmable pins (ADC, DAC, PWM, I2C, SPI)</span></div>
+          <div class="spec-item"><span class="spec-key">ADC</span><span class="spec-val">12-bit SAR ADC, up to 18 channels</span></div>
+          <div class="spec-item"><span class="spec-key">Operating Voltage</span><span class="spec-val">3.3V (5V USB input)</span></div>
+        </div>
+        <div class="component-note">
+          <strong>Role:</strong> Central processing unit — reads analog sensor data, processes AQI calculations, and transmits results via Wi-Fi/BLE.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MQ-135 -->
+  <div class="component-block">
+    <div class="component-header">
+      <div class="component-tag sensor-tag">GAS SENSOR</div>
+      <h3>MQ-135 Gas Sensor</h3>
+    </div>
+    <div class="component-body component-with-image">
+      <div class="component-image">
+        <img src="mq135.png" alt="MQ-135 Gas Sensor">
+      </div>
+      <div class="component-specs">
+        <div class="spec-grid">
+          <div class="spec-item"><span class="spec-key">Detection</span><span class="spec-val">NH₃, NOₓ, CO₂, Benzene, Alcohol, Smoke</span></div>
+          <div class="spec-item"><span class="spec-key">Range</span><span class="spec-val">10–1000 ppm (varies by gas)</span></div>
+          <div class="spec-item"><span class="spec-key">Output</span><span class="spec-val">Analog voltage (0–3.3V after divider)</span></div>
+          <div class="spec-item"><span class="spec-key">Heater Voltage</span><span class="spec-val">5V</span></div>
+          <div class="spec-item"><span class="spec-key">Preheat Time</span><span class="spec-val">24–48 hrs (initial), ~5 min (subsequent)</span></div>
+          <div class="spec-item"><span class="spec-key">Operating Temp</span><span class="spec-val">-10°C to 45°C</span></div>
+        </div>
+        <div class="component-note">
+          <strong>Role:</strong> Detects harmful gas concentrations — analog output is proportional to gas concentration, read via ESP32 ADC.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GP2Y1010AU0F -->
+  <div class="component-block">
+    <div class="component-header">
+      <div class="component-tag dust-tag">DUST SENSOR</div>
+      <h3>GP2Y1010AU0F — PM2.5 Particle Sensor</h3>
+    </div>
+    <div class="component-body component-with-image">
+      <div class="component-image">
+        <img src="gp2y.png" alt="GP2Y1010AU0F Dust Sensor">
+      </div>
+      <div class="component-specs">
+        <div class="spec-grid">
+          <div class="spec-item"><span class="spec-key">Detection</span><span class="spec-val">Fine particles (PM2.5), dust, smoke</span></div>
+          <div class="spec-item"><span class="spec-key">Sensitivity</span><span class="spec-val">0.5 V per 100 µg/m³</span></div>
+          <div class="spec-item"><span class="spec-key">Output</span><span class="spec-val">Analog voltage (proportional to dust density)</span></div>
+          <div class="spec-item"><span class="spec-key">LED Pulse</span><span class="spec-val">0.32ms pulse, 10ms cycle</span></div>
+          <div class="spec-item"><span class="spec-key">Supply Voltage</span><span class="spec-val">5V (with 150Ω + 220µF on LED)</span></div>
+          <div class="spec-item"><span class="spec-key">Current Draw</span><span class="spec-val">~20 mA (including LED)</span></div>
+        </div>
+        <div class="component-note">
+          <strong>Role:</strong> Measures particulate matter density — uses an infrared LED and phototransistor to detect light scattered by dust particles.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>AI/Robotics Lab — Design Document v1.0</span>
+    <span>April 2026</span>
+  </div>
+</div>
+
+<!-- PAGE 4: WIRING -->
+<div class="page">
+  <div class="page-header">
+    <span class="doc-title">AQI Monitoring System</span>
+    <span class="page-number">4</span>
+  </div>
+
+  <h2 class="section-title"><span class="section-num">04</span> Wiring & Connections</h2>
+
+  <h3 class="subsection">4.1 — MQ-135 → ESP32</h3>
+  <table class="wiring-table">
+    <thead>
+      <tr><th>MQ-135 Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>VCC</td><td>VIN (5V)</td><td>Heater requires 5V supply</td></tr>
+      <tr><td>GND</td><td>GND</td><td>Common ground</td></tr>
+      <tr><td>AOUT</td><td>GPIO 34</td><td>Analog read — ADC1_CH6 (input-only pin)</td></tr>
+      <tr><td>DOUT</td><td>GPIO 35</td><td>Optional digital threshold output</td></tr>
+    </tbody>
+  </table>
+
+  <h3 class="subsection">4.2 — GP2Y1010AU0F → ESP32</h3>
+  <table class="wiring-table">
+    <thead>
+      <tr><th>Sensor Pin</th><th>ESP32 Pin</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Pin 1 (V-LED)</td><td>Via 150Ω resistor to 5V</td><td>LED anode — series resistor required</td></tr>
+      <tr><td>Pin 2 (LED-GND)</td><td>GND</td><td>LED cathode — add 220µF cap to GND</td></tr>
+      <tr><td>Pin 3 (LED Drive)</td><td>GPIO 32</td><td>Digital output — controls IR LED pulse</td></tr>
+      <tr><td>Pin 4 (S-GND)</td><td>GND</td><td>Sensor ground</td></tr>
+      <tr><td>Pin 5 (Vo)</td><td>GPIO 33</td><td>Analog output — dust density voltage</td></tr>
+      <tr><td>Pin 6 (Vcc)</td><td>VIN (5V)</td><td>Sensor supply voltage</td></tr>
+    </tbody>
+  </table>
+
+
+
+  <div class="page-footer">
+    <span>AI/Robotics Lab — Design Document v1.0</span>
+    <span>April 2026</span>
+  </div>
+</div>
+
+<!-- PAGE 5: SYSTEM ARCHITECTURE & NOTES -->
+<div class="page">
+  <div class="page-header">
+    <span class="doc-title">AQI Monitoring System</span>
+    <span class="page-number">5</span>
+  </div>
+
+  <h2 class="section-title"><span class="section-num">05</span> System Architecture</h2>
+
+  <div class="arch-flow">
+    <div class="arch-stage">
+      <div class="stage-label">Input</div>
+      <div class="arch-block sensor-block">
+        <div class="ab-title">MQ-135</div>
+        <div class="ab-desc">Gas PPM</div>
+      </div>
+      <div class="arch-block sensor-block">
+        <div class="ab-title">GP2Y1010AU0F</div>
+        <div class="ab-desc">PM2.5 µg/m³</div>
+      </div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-stage">
+      <div class="stage-label">Processing</div>
+      <div class="arch-block proc-block">
+        <div class="ab-title">ESP32</div>
+        <div class="ab-desc">ADC Read → Calibration → AQI Calc</div>
+      </div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-stage">
+      <div class="stage-label">Output</div>
+      <div class="arch-block out-block">
+        <div class="ab-title">Wi-Fi / BLE</div>
+        <div class="ab-desc">Dashboard, Alerts, Logging</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title"><span class="section-num">06</span> GPIO Pin Summary</h2>
+
+  <table class="summary-table">
+    <thead>
+      <tr><th>ESP32 GPIO</th><th>Direction</th><th>Connected To</th><th>Function</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>GPIO 32</code></td><td>OUTPUT</td><td>GP2Y — Pin 3</td><td>IR LED pulse control</td></tr>
+      <tr><td><code>GPIO 33</code></td><td>INPUT (ADC)</td><td>GP2Y — Pin 5</td><td>Dust density analog read</td></tr>
+      <tr><td><code>GPIO 34</code></td><td>INPUT (ADC)</td><td>MQ-135 — AOUT</td><td>Gas concentration analog read</td></tr>
+      <tr><td><code>GPIO 35</code></td><td>INPUT</td><td>MQ-135 — DOUT</td><td>Digital threshold trigger</td></tr>
+      <tr><td><code>VIN</code></td><td>POWER</td><td>Both sensors VCC</td><td>5V supply rail</td></tr>
+      <tr><td><code>GND</code></td><td>POWER</td><td>Both sensors GND</td><td>Common ground</td></tr>
+    </tbody>
+  </table>
+
+
+  <div class="doc-end">
+    <div class="end-line"></div>
+    <span>End of Document</span>
+    <div class="end-line"></div>
+  </div>
+
+  <div class="page-footer">
+    <span>AI/Robotics Lab — Design Document v1.0</span>
+    <span>April 2026</span>
+  </div>
+</div>
+
+</body>
+</html>

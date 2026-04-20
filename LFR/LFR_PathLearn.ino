@@ -525,7 +525,7 @@ void setup() {
   pinMode(EN, OUTPUT);
   digitalWrite(EN, LOW);    // Enable the mux (active-low)
 
-  // Optional side sensors
+  // Side sensors
   pinMode(SIDE_LEFT,  INPUT);
   pinMode(SIDE_RIGHT, INPUT);
 
