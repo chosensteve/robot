@@ -135,6 +135,11 @@ void setup() {
   pinMode(RIN1, OUTPUT);
   pinMode(RIN2, OUTPUT);
 
+  analogWriteFrequency(LIN1, 20000);
+  analogWriteFrequency(LIN2, 20000);
+  analogWriteFrequency(RIN1, 20000);
+  analogWriteFrequency(RIN2, 20000);
+
   stopMotors();
   calibrate();
 }
