@@ -58,7 +58,7 @@ bool  flipDir     = false;
 
 unsigned long lastPidTime  = 0;
 unsigned long lastPrintTime= 0;
-#define PID_INTERVAL_MS   10   
+#define PID_INTERVAL_MS   2   
 #define PRINT_INTERVAL_MS 150   
 
 void FASTRUN isr1(){ digitalRead(ENC1_B)?enc1++:enc1--; }
