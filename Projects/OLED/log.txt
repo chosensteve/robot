@@ -4335,3 +4335,15 @@ Traceback (most recent call last):
   File "C:\Users\Dev\AppData\Local\Programs\Python\Python313\Lib\site-packages\requests\adapters.py", line 678, in send
     raise ConnectionError(e, request=request)
 requests.exceptions.ConnectionError: HTTPSConnectionPool(host='accounts.spotify.com', port=443): Max retries exceeded with url: /api/token (Caused by NameResolutionError("HTTPSConnection(host='accounts.spotify.com', port=443): Failed to resolve 'accounts.spotify.com' ([Errno 11001] getaddrinfo failed)"))
+====================================
+ PC Dashboard Server v3.0 (TABS) 
+====================================
+HOTKEYS ENABLED: Shift + Page Up/Down
+
+Verifying Spotify connection...
+Spotify Authentication Successful!
+
+Connecting to ESP32 on COM7...
+
+[ERROR] FAILED to connect to COM7.
+CRITICAL: Make sure the Arduino IDE Serial Monitor is CLOSED!
