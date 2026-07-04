@@ -5475,3 +5475,15 @@ Connecting to ESP32 on COM7...
 
 [ERROR] FAILED to connect to COM7.
 CRITICAL: Make sure the Arduino IDE Serial Monitor is CLOSED!
+====================================
+ PC Dashboard Server v3.0 (TABS) 
+====================================
+HOTKEYS ENABLED: Shift + Page Up/Down
+
+Verifying Spotify connection...
+Spotify Authentication Successful!
+
+Connecting to ESP32 on COM7...
+
+[ERROR] FAILED to connect to COM7.
+CRITICAL: Make sure the Arduino IDE Serial Monitor is CLOSED!
