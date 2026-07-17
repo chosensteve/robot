@@ -5943,3 +5943,15 @@ Traceback (most recent call last):
     )
 spotipy.exceptions.SpotifyException: http status: 403, code: -1 - https://api.spotify.com/v1/me/player/currently-playing?additional_types=track:
  Active premium subscription required for the owner of the app. When the subscription status changes, it can take a few hours before requests are allowed again., reason: None
+====================================
+ PC Dashboard Server v3.0 (TABS) 
+====================================
+HOTKEYS ENABLED: Shift + Page Up/Down
+
+Verifying Spotify connection...
+Spotify Authentication Successful!
+
+Connecting to ESP32 on COM7...
+
+[ERROR] FAILED to connect to COM7.
+CRITICAL: Make sure the Arduino IDE Serial Monitor is CLOSED!
