@@ -7783,3 +7783,11 @@ HOTKEYS ENABLED: Shift + Page Up/Down
 Verifying Spotify connection...
 
 [ERROR] Failed to authenticate with Spotify.
+====================================
+ PC Dashboard Server v3.0 (TABS) 
+====================================
+HOTKEYS ENABLED: Shift + Page Up/Down
+
+Verifying Spotify connection...
+
+[ERROR] Failed to authenticate with Spotify.
